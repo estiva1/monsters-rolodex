@@ -10,7 +10,7 @@ class App extends Component {
     super();
 
     this.state = {
-      monsters: [],
+      kitties: [],
       searchField: "",
     };
   }
@@ -20,7 +20,7 @@ class App extends Component {
       .then((response) => response.json())
       .then((users) =>
         this.setState(() => {
-          return { monsters: users };
+          return { kitties: users };
         })
       );
   }
@@ -33,20 +33,21 @@ class App extends Component {
   };
 
   render() {
-    const { monsters, searchField } = this.state;
+    const { kitties, searchField } = this.state;
     const { onSearchChange } = this;
 
-    const filteredMonsters = monsters.filter((monster) => {
-      return monster.name.toLocaleLowerCase().includes(searchField);
+    const filteredKitties = kitties.filter((kitty) => {
+      return kitty.name.toLocaleLowerCase().includes(searchField);
     });
     return (
       <div className="App">
+        <h1 className="app-title">Kitties Party</h1>
         <SearchBox
-          className="monsters-search-box"
+          className="kitties-search-box"
           onChangeHandler={onSearchChange}
-          placeholder="Search monsters..."
+          placeholder="Search kitties..."
         />
-        <CardList monsters={filteredMonsters} />
+        <CardList kitties={filteredKitties} />
       </div>
     );
   }
