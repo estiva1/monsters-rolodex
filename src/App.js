@@ -1,56 +1,90 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 
 import "./components/card-list/card-list.component";
 import "./App.css";
-import CardList from "./components/card-list/card-list.component";
 import SearchBox from "./components/search-box/search-box.component";
+import CardList from "./components/card-list/card-list.component";
 
-class App extends Component {
-  constructor() {
-    super();
+const App = () => {
+  const [searchField, setSearchField] = useState("");
+  const [kitties, setKitties] = useState([]);
+  const [filteredKitties, setFilteredKitties] = useState(kitties);
 
-    this.state = {
-      kitties: [],
-      searchField: "",
-    };
-  }
+  console.log("render");
 
-  componentDidMount() {
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
-      .then((users) =>
-        this.setState(() => {
-          return { kitties: users };
-        })
-      );
-  }
+      .then((users) => setKitties(users));
+  }, []);
 
-  onSearchChange = (event) => {
-    const searchField = event.target.value.toLocaleLowerCase();
-    this.setState(() => {
-      return { searchField };
-    });
-  };
-
-  render() {
-    const { kitties, searchField } = this.state;
-    const { onSearchChange } = this;
-
-    const filteredKitties = kitties.filter((kitty) => {
+  useEffect(() => {
+    const newFilteredKitties = kitties.filter((kitty) => {
       return kitty.name.toLocaleLowerCase().includes(searchField);
     });
-    return (
-      <div className="App">
-        <h1 className="app-title">Kitties Party</h1>
-        <SearchBox
-          className="kitties-search-box"
-          onChangeHandler={onSearchChange}
-          placeholder="Search kitties..."
-        />
-        <CardList kitties={filteredKitties} />
-      </div>
-    );
-  }
-}
+
+    setFilteredKitties(newFilteredKitties);
+  }, [kitties, searchField]);
+
+  const onSearchChange = (event) => {
+    const searchFieldString = event.target.value.toLowerCase();
+    setSearchField(searchFieldString);
+  };
+
+  return (
+    <div className="App">
+      <h1 className="app-title">Kitties Party</h1>
+
+      <SearchBox
+        className="kitties-search-box"
+        onChangeHandler={onSearchChange}
+        placeholder="Search kitties..."
+      />
+      <CardList kitties={filteredKitties} />
+    </div>
+  );
+};
+
+// class App extends Component {
+//   constructor() {
+//     super();
+
+//     this.state = {
+//       kitties: [],
+//       searchField: "",
+//     };
+//   }
+
+//   componentDidMount() {
+//
+//   }
+
+//   onSearchChange = (event) => {
+//     const searchField = event.target.value.toLocaleLowerCase();
+//     this.setState(() => {
+//       return { searchField };
+//     });
+//   };
+
+//   render() {
+//     const { kitties, searchField } = this.state;
+//     const { onSearchChange } = this;
+
+//     const filteredKitties = kitties.filter((kitty) => {
+//       return kitty.name.toLocaleLowerCase().includes(searchField);
+//     });
+//     return (
+//       <div className="App">
+//         <h1 className="app-title">Kitties Party</h1>
+//         <SearchBox
+//           className="kitties-search-box"
+//           onChangeHandler={onSearchChange}
+//           placeholder="Search kitties..."
+//         />
+//         <CardList kitties={filteredKitties} />
+//       </div>
+//     );
+//   }
+// }
 
 export default App;
